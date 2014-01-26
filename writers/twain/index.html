@@ -96,13 +96,19 @@
       #layer_selector li:hover {
         cursor: pointer;
         color: #ddd;
+        border-bottom: 1px solid #333;
+        border-bottom: 1px solid rgba(255,255,255,0.4);
+      }
+      #layer_selector li.selected {
+        border-bottom: 1px solid #333;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
       }
       #credit{
           position: relative;
           padding: 0;
           width: 300px;
           color: #ccc;
-          margin-bottom: 10px;
+          margin-bottom: 20px;
           text-align: center;
       }
       #credit span,
@@ -136,8 +142,8 @@
 		</label>
 		<br/>
       <ul id="style_selector">
-        <li data="points" class="points">.  .  .  .  .  .  .  .</li>
         <li data="lines" class="lines selected"> ---- ---- ---- </li>
+        <li data="points" class="points">.  .  .  .  .  .  .  .</li>
       </ul>
   	</div>
   </div>
