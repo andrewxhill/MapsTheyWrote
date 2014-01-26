@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Layer selector example | CartoDB.js</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+      html, body, #map {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      #layer_selector{
+	        position: absolute;
+	        top: 20px;
+	        right: 20px;
+	        padding: 0;
+		    width: 300px;
+	    }
+      #layer_selector select {
+		    font-size: 11px;
+		    border: 1px solid white;
+		    border-radius: 0;
+		    color: black;
+		    padding: 4px;
+		    margin-left: 2px;
+		    width: 100%;
+		    -webkit-appearance: none;
+		    background: #f8f8f8;
+		}
+      #layer_selector select:active {
+		    border: 1px solid #000;
+		} 
+      #layer_selector label {position:relative}
+      #layer_selector label:after {
+		    content:'<>';
+		    font:11px "Consolas", monospace;
+		    color:#aaa;
+		    -webkit-transform:rotate(90deg);
+		    -moz-transform:rotate(90deg);
+		    -ms-transform:rotate(90deg);
+		    transform:rotate(90deg);
+		    right:8px; top:2px;
+		    padding:0 0 2px;
+		    border-bottom:1px solid #ddd;
+		    position:absolute;
+		    pointer-events:none;
+		}
+      #layer_selector label:before {
+		    content:'';
+		    right:6px; top:0px;
+		    width:20px; height:20px;
+		    background:#f8f8f8;
+		    position:absolute;
+		    pointer-events:none;
+		    display:block;
+		}
+
+
+      #layer_selector ul {
+        padding: 0; margin: 0;
+        list-style-type: none;
+      }
+
+      #layer_selector li {
+        margin: 15px 0 0 2px;
+        width: 140px;
+        font-family: "Helvetica", Arial;
+        font-size: 24px;
+        color: #444;
+        cursor: auto;
+        float: left;
+        text-align: center;
+        font-weight: 700;
+      }
+      #layer_selector li.points{
+        padding: 0px 4px 6px 2px;
+        color: #3E7BB6;
+      }
+      #layer_selector li.lines{
+        padding: 5px 4px 1px 2px;
+        color: #91003F;
+      }
+      #layer_selector li:hover {
+        cursor: pointer;
+        color: #ddd;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+    <![endif]-->
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="layer_selector" >
+    	<label>
+	    <select class="twain-works">
+			<option value="*" class="selected">THE COLLECTED WORKS OF MARK TWAIN</option>
+		</select>
+		</label>
+		<br/>
+      <ul id="style_selector">
+        <li data="points" class="points">.  .  .  .  .  .  .  .</li>
+        <li data="lines" class="lines selected"> ---- ---- ---- </li>
+      </ul>
+	</div>
+
+    <!-- include cartodb.js library -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+
+		<script type="cartocss/html" id="cartocss_points_template">
+			#twain{
+			  marker-opacity: 0.9;
+			  marker-line-color: #FFFFFF;
+			  marker-line-opacity: 1;
+			  marker-placement: point;
+			  marker-type: ellipse;
+			  marker-fill: #3E7BB6;
+			  marker-allow-overlap: true;
+			  marker-width: 4;
+			  marker-line-width: 0.5;
+			  [zoom>3]{
+			    marker-width: 6;
+			    marker-line-width: 0.5;
+				  [zoom>4]{
+				    marker-width: 8;
+				    marker-line-width: 1;
+					  [zoom>5]{
+					    marker-width: 12;
+					    marker-line-width: 1.5;
+						  [zoom>6]{
+						    marker-width: 16;
+						    marker-line-width: 2;
+						   }
+					   }
+				   }
+			   }
+			}
+		</script>
+		<script type="cartocss/html" id="cartocss_lines_template">
+			Map{
+			  buffer-size: 900;
+			}
+			#twain{
+			  polygon-opacity: 0;
+			  line-color: #F1EEF6;
+			  line-width: 0.5;
+			  [c<100] { line-width: 1.0}
+			  [c<20] { line-width: 1.5}
+			  line-opacity: 0.3;
+			  line-smooth: 1.3;
+			}
+			#twain [ line <= 400000] {
+			   line-color: #91003F;
+			}
+			#twain [ line <= 300000] {
+			   line-color: #CE1256;
+			}
+			#twain [ line <= 250000] {
+			   line-color: #E7298A;
+			}
+			#twain [ line <= 200000] {
+			   line-color: #DF65B0;
+			}
+			#twain [ line <= 150000] {
+			   line-color: #7fbfff;
+			}
+			#twain [ line <= 100000] {
+			   line-color: #40a0ff;
+			}
+			#twain [ line <= 50000] {
+			   line-color: #0080ff;
+			}
+		</script>
+    <script>
+
+      var sql, sources, layer;
+      var lineSql = "SELECT ST_MakeLine(the_geom_webmercator) the_geom_webmercator, count(*) c, min(line) line, source, min(cartodb_id) cartodb_id FROM twain {where} GROUP BY source"
+      var pointSql = "SELECT * FROM twain {where} "
+      var curSql = lineSql;
+
+      function main() {
+        sql = new cartodb.SQL({ user: 'andrew'});
+        getworks();
+
+        cartodb.createVis('map', 'http://andrew.cartodb.com/api/v2/viz/f4cf9d42-86ae-11e3-a632-3085a9a9563c/viz.json', {
+          tiles_loader: true,
+          center_lat: 25,
+          center_lon: -10,
+          zoom:3
+        })
+        .done(function(vis, layers) {
+          // layer 0 is the base layer, layer 1 is cartodb layer
+          layer = layers[1].getSubLayer(0);
+          $('#style_selector li').click(function(e){
+		          $('#style_selector li').removeClass('selected');
+		          $(e.target).addClass('selected');
+
+          		var w = $(e.target).attr('data');
+
+          		if (w == 'points'){
+          			curSql = pointSql;
+          			layer.setCartoCSS($('#cartocss_points_template').html());
+          			setsql();
+          			// layer.setSQL(curSql);
+          		} else {
+          			curSql = lineSql;
+          			layer.setCartoCSS($('#cartocss_lines_template').html());
+          			setsql();
+          			// layer.setSQL(curSql);
+          		}
+          });
+        })
+        .error(function(err) {
+          console.log(err);
+        });
+      }
+      function setsql(){
+	      	var v = $('.twain-works').val();
+        	if ($('.twain-works').val()=="*"){
+        		var s = curSql.replace("{where}", " ");
+        	} else {
+        		var s = curSql.replace("{where}","WHERE source = '"+sources[v].replace("'","''")+"'");
+          }
+        	layer.setSQL(s);
+	     }
+      function getworks() {
+        // var query = getQuery();
+        query = "SELECT source, count(*) n, min(line) mn, max(line) mx FROM twain GROUP BY source ORDER BY source DESC";
+        sql.execute(query).done(function(json) {
+            sources = [];
+            for (i in json.rows){
+            	// console.log(json.rows[i].source, json.rows[i].mn, json.rows[i].mx, json.rows[i].n)
+                sources.push(json.rows[i].source.toString());
+                var s = json.rows[i].source.toString();
+                if (s.length > 36){
+                	s = s.substr(0,32)+'...'
+                } 
+                $('.twain-works').append('<option value="'+i+'">'+s+' ('+json.rows[i].n.toString()+')</option>')
+            }
+            $('.twain-works').change(function(){
+            	setsql();
+            })
+        });
+      }
+      window.onload = main;
+    </script>
+  </body>
+</html>
