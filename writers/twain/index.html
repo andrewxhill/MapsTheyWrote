@@ -178,9 +178,9 @@
 		</script>
     <script>
 
-      var sql, sources, layer;
+      var sql, sources, points, lines;
       var lineSql = "SELECT ST_MakeLine(the_geom_webmercator) the_geom_webmercator, count(*) c, min(line) line, source, min(cartodb_id) cartodb_id FROM twain {where} GROUP BY source"
-      var pointSql = "SELECT * FROM twain {where} "
+      var pointSql = "SELECT cartodb_id, the_geom, the_geom_webmercator, passage, source, file, line, CASE WHEN section = source THEN '' ELSE section END AS section, 1 as c FROM twain {where} ORDER BY passage NULLS FIRST"
       var curSql = lineSql;
 
       function main() {
@@ -194,8 +194,11 @@
           zoom:3
         })
         .done(function(vis, layers) {
-          // layer 0 is the base layer, layer 1 is cartodb layer
-          layer = layers[1].getSubLayer(0);
+          lines = layers[1].getSubLayer(1);
+            lines.setInteraction(false);
+          points = layers[1].getSubLayer(0);
+          points.hide();
+
           $('#style_selector li').click(function(e){
 		          $('#style_selector li').removeClass('selected');
 		          $(e.target).addClass('selected');
@@ -204,14 +207,14 @@
 
           		if (w == 'points'){
           			curSql = pointSql;
-          			layer.setCartoCSS($('#cartocss_points_template').html());
-          			setsql();
-          			// layer.setSQL(curSql);
+                setsql();
+                lines.hide();
+                points.show();
           		} else {
           			curSql = lineSql;
-          			layer.setCartoCSS($('#cartocss_lines_template').html());
-          			setsql();
-          			// layer.setSQL(curSql);
+                setsql();
+                points.hide();
+                lines.show();
           		}
           });
         })
@@ -226,7 +229,12 @@
         	} else {
         		var s = curSql.replace("{where}","WHERE source = '"+sources[v].replace("'","''")+"'");
           }
-        	layer.setSQL(s);
+          if ($('#style_selector li.selected').attr('data') == 'points'){
+            points.setSQL(s);
+          } else {
+            lines.setSQL(s);
+          }
+          return false;
 	     }
       function getworks() {
         // var query = getQuery();
