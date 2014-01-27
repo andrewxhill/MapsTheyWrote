@@ -14,7 +14,7 @@
       }
       #menu{
         background: #000;
-        background: rgba(0,0,0,0.3);
+        background: rgba(0,0,0,0.4);
           position: absolute;
           top: 0px;
           right: 20px;
@@ -30,18 +30,26 @@
           text-align: right;
 	    }
       #layer_selector select {
-		    font-size: 11px;
-		    border: 1px solid white;
-		    border-radius: 0;
-		    color: black;
-		    padding: 4px;
-		    margin-left: 2px;
-		    width: 300px;
-		    -webkit-appearance: none;
-		    background: #f8f8f8;
-		}
+        font-size: 11px;
+        border: 1px solid #777;
+        border-radius: 0;
+        color: white;
+        padding: 4px;
+        margin: 10px 0 0 2px;
+        width: 300px;
+        -webkit-appearance: none;
+        background: transparent;
+    }
+      #layer_selector  .options {
+        font-size: 11px;
+        color: white;
+        -webkit-appearance: none;
+        background: transparent;
+        color: red;
+    }
       #layer_selector select:active {
 		    border: 1px solid #000;
+        background: transparent;
 		} 
       #layer_selector label {position:relative}
       #layer_selector label:after {
@@ -62,11 +70,12 @@
 		    content:'';
 		    right:6px; top:0px;
 		    width:20px; height:20px;
-		    background:#f8f8f8;
+		    background:#222;
 		    position:absolute;
 		    pointer-events:none;
 		    display:block;
 		}
+
 
 
       #layer_selector ul {
@@ -75,10 +84,10 @@
       }
 
       #layer_selector li {
-        margin: 15px 0 0 2px;
+        margin: 0 0 10px 2px;
         width: 140px;
         font-family: "Helvetica", Arial;
-        font-size: 13px;
+        font-size: 14px;
         color: #444;
         cursor: auto;
         float: left;
@@ -119,6 +128,7 @@
           color: #ccc;
           margin-bottom: 20px;
           text-align: center;
+          font-size: 12px;
       }
       #credit span,
       #credit span a{
@@ -144,17 +154,16 @@
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script> 
     </div>
     <div id="layer_selector" >
-    	<label>
-	    <select class="twain-works">
-			<option value="*" class="selected">THE COLLECTED WORKS OF MARK TWAIN</option>
-		</select>
-		</label>
-		<br/>
-
       <ul id="style_selector">
         <li data="lines" class="lines selected">line map</li>
         <li data="points" class="points">marker map</li>
       </ul>
+    <br/>
+      <label>
+        <select class="twain-works">
+         <option value="*" class="selected options">THE COLLECTED WORKS OF MARK TWAIN</option>
+        </select>
+      </label>
   	</div>
   </div>
     <!-- include cartodb.js library -->
@@ -231,7 +240,7 @@
                 if (s.length > 36){
                 	s = s.substr(0,32)+'...'
                 } 
-                $('.twain-works').append('<option value="'+i+'">'+s+' ('+json.rows[i].n.toString()+')</option>')
+                $('.twain-works').append('<option class="options" value="'+i+'">'+s+' ('+json.rows[i].n.toString()+')</option>');
             }
             $('.twain-works').change(function(){
             	setsql();
