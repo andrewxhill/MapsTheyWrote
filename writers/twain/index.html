@@ -133,6 +133,12 @@
       }
       #credit span a, #credit a:hover, #credit a:visited{ color: #57A6F2; }
 
+      #thumbnail {
+        position: absolute;
+        z-index: -1000;
+        top: -1000px;
+        left: -1000px;
+      }
     </style>
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
@@ -141,6 +147,7 @@
     <![endif]-->
   </head>
   <body>
+    <div id="thumbnail"><img src="thumbnail.png" /></div>
     <div id="map"></div>
     <div id="menu">
     <div id="credit" >
