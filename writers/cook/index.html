@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Captain Cook's Journal mapped</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta property="og:image" content="http://andrewxhill.com/maps/writers/twain/thumbnail.png"/>
+    <meta property="og:image:secure_url" content="https://i.imgur.com/uOIEKIT.png" />
+    <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+      html, body, #map {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      #menu{
+        background: #000;
+        background: rgba(0,0,0,0.4);
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        padding: 10px;
+        width: 300px;
+        height: auto;
+        font-family: "Helvetica", Arial;
+        color: white;
+      }
+      #layer_selector{
+          position: relative;
+          /*top: 20px;*/
+          padding: 0;
+		      width: 300px;
+          text-align: right;
+	    }
+      #layer_selector select {
+        font-size: 11px;
+        border: 1px solid #777;
+        border-radius: 0;
+        color: white;
+        padding: 4px;
+        margin: 10px 0 0 2px;
+        width: 300px;
+        -webkit-appearance: none;
+        background: transparent;
+    }
+      #layer_selector  .options {
+        font-size: 11px;
+        color: white;
+        -webkit-appearance: none;
+        background: transparent;
+        color: red;
+    }
+      #layer_selector select:active {
+		    border: 1px solid #000;
+        background: transparent;
+		} 
+      #layer_selector label {position:relative}
+      #layer_selector label:after {
+		    content:'<>';
+		    font:11px "Consolas", monospace;
+		    color:#aaa;
+		    -webkit-transform:rotate(90deg);
+		    -moz-transform:rotate(90deg);
+		    -ms-transform:rotate(90deg);
+		    transform:rotate(90deg);
+		    right:8px; top:2px;
+		    padding:0 0 2px;
+		    border-bottom:1px solid #ddd;
+		    position:absolute;
+		    pointer-events:none;
+		}
+      #layer_selector label:before {
+		    content:'';
+		    right:6px; top:0px;
+		    width:20px; height:20px;
+		    background:transparent;
+		    position:absolute;
+		    pointer-events:none;
+		    display:block;
+		}
+
+
+
+      #layer_selector ul {
+        padding: 0; margin: 0;
+        list-style-type: none;
+      }
+
+      #layer_selector li {
+        margin: 0 0 10px 2px;
+        width: 140px;
+        font-size: 14px;
+        color: #444;
+        cursor: auto;
+        float: left;
+        text-align: center;
+        font-weight: 700;
+        padding: 1px 2px 2px 2px;
+        background: rgba(0,0,0,0.1);
+      }
+
+      #layer_selector li.points{
+        color: #3E7BB6;
+      }
+      #layer_selector li.lines{
+        color: #91003F;
+      }
+      #layer_selector li:hover {
+        cursor: pointer;
+        color: #ddd;
+        border-bottom: 1px solid #333;
+        border-bottom: 1px solid rgba(255,255,255,0.4);
+        padding-bottom: 0px;
+      }
+      #layer_selector li.selected {
+        background: #000;
+        background: rgba(255,255,255,0.1);
+      }
+      #social{
+          position: relative;
+          padding: 0;
+          width: 300px;
+          color: #ccc;
+          margin-bottom: 20px;
+          text-align: right;
+          font-size: 14px;
+          font-weight: 700;
+      }
+      #social span,
+      #social span a{
+          vertical-align: top;
+          line-height: 24px;
+          margin-right: 15px;
+          text-decoration: none;
+      }
+      #social span a, #social a:hover, #social a:visited{ color: #57A6F2; }
+
+      #information {
+        width: 300px;
+        margin: 15px 0 15px 0;
+        font-size: 13px;
+        text-align: justify;
+      }
+      #information span a, #information a:hover, #information a:visited{ color: #57A6F2; }
+    </style>
+
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+    <![endif]-->
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="menu">
+      <h1>Mapping Captain Cook's Journal</h1>
+    <div id="layer_selector" >
+      <ul id="style_selector">
+        <li data="lines" class="lines selected">line map</li>
+        <li data="points" class="points">marker map</li>
+      </ul>
+    <br/>
+      <label>
+        <select class="cook-works">
+         <option value="*" class="selected options">CAPTAIN COOK'S JOURNAL</option>
+        </select>
+      </label>
+  	</div>
+    <div id="information">
+      <p>
+        
+      </p>
+      <p>
+        If you are interested in this map, see the <a href="../twain/index.html" target="_blank">original for Mark Twain</a>, follow <a href="http://twitter.com/andrewxhill" target="_blank">andrew on twitter</a>, or <a href="http://cartodb.com" target="_blank">try out cartodb</a> to make maps yourself. 
+      </p>
+    </div>
+    <div id="social" >
+      <a href="https://twitter.com/share" class="twitter-share-button" data-text="Interactive map of Captain Cook's journal" data-via="andrewxhill" data-related="cartodb">Tweet</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script> 
+    </div>
+  </div>
+    <!-- include cartodb.js library -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+    <script>
+
+      var sql, sources, points, lines;
+      var lineSql = "SELECT ST_MakeLine(the_geom_webmercator) the_geom_webmercator, count(*) c, min(line) line, source, min(cartodb_id) cartodb_id FROM captain_cook {where} GROUP BY source"
+      var pointSql = "SELECT cartodb_id, the_geom, the_geom_webmercator, passage, source, file, line, 1 as c FROM captain_cook {where} ORDER BY passage NULLS FIRST"
+      var curSql = lineSql;
+
+      function main() {
+        sql = new cartodb.SQL({ user: 'andrew'});
+        getworks();
+
+        cartodb.createVis('map', 'http://andrew.cartodb.com/api/v2/viz/129a9b6c-86ad-11e3-abd2-3085a9a9563c/viz.json', {
+          tiles_loader: true,
+          center_lat: 25,
+          center_lon: -10,
+          zoom:3
+        })
+        .done(function(vis, layers) {
+          lines = layers[1].getSubLayer(1);
+            lines.setInteraction(false);
+          points = layers[1].getSubLayer(0);
+          points.hide();
+
+          $('#style_selector li').click(function(e){
+		          $('#style_selector li').removeClass('selected');
+		          $(e.target).addClass('selected');
+
+          		var w = $(e.target).attr('data');
+
+          		if (w == 'points'){
+          			curSql = pointSql;
+                setsql();
+                lines.hide();
+                points.show();
+          		} else {
+          			curSql = lineSql;
+                setsql();
+                points.hide();
+                lines.show();
+          		}
+          });
+        })
+        .error(function(err) {
+          console.log(err);
+        });
+      }
+      function setsql(){
+	      	var v = $('.cook-works').val();
+        	if ($('.cook-works').val()=="*"){
+        		var s = curSql.replace("{where}", " ");
+        	} else {
+        		var s = curSql.replace("{where}","WHERE source = '"+sources[v].replace("'","''")+"'");
+          }
+          if ($('#style_selector li.selected').attr('data') == 'points'){
+            points.setSQL(s);
+          } else {
+            lines.setSQL(s);
+          }
+          return false;
+	     }
+      function getworks() {
+        // var query = getQuery();
+        query = "SELECT source, count(*) n, min(line) mn, max(line) mx FROM captain_cook GROUP BY source ORDER BY source DESC";
+        sql.execute(query).done(function(json) {
+            sources = [];
+            for (i in json.rows){
+            	// console.log(json.rows[i].source, json.rows[i].mn, json.rows[i].mx, json.rows[i].n)
+                sources.push(json.rows[i].source.toString());
+                var s = json.rows[i].source.toString();
+                if (s.length > 36){
+                	s = s.substr(0,32)+'...'
+                } 
+                $('.cook-works').append('<option class="options" value="'+i+'">'+s+' ('+json.rows[i].n.toString()+')</option>');
+            }
+            $('.cook-works').change(function(){
+            	setsql();
+            })
+        });
+      }
+      window.onload = main;
+    </script>
+  </body>
+</html>
