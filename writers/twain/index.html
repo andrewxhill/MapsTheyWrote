@@ -4,6 +4,7 @@
     <title>The complete works of Mark Twain mapped</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta property="og:image" content="thumbnail.jpg"/>
     <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
     <style>
       @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
@@ -132,13 +133,6 @@
           text-decoration: none;
       }
       #credit span a, #credit a:hover, #credit a:visited{ color: #57A6F2; }
-
-      #thumbnail {
-        position: absolute;
-        z-index: -1000;
-        top: -1000px;
-        left: -1000px;
-      }
     </style>
 
     <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
@@ -147,7 +141,6 @@
     <![endif]-->
   </head>
   <body>
-    <div id="thumbnail"><img src="thumbnail.png" /></div>
     <div id="map"></div>
     <div id="menu">
     <div id="credit" >
